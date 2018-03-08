@@ -194,29 +194,7 @@ class AudioSignal(object):
 
     @audio_data.setter
     def audio_data(self, value):
-
-        if value is None:
-            self._audio_data = None
-            return
-
-        elif not isinstance(value, np.ndarray):
-            raise ValueError('Type of self.audio_data must be of type np.ndarray!')
-
-        if not np.isfinite(value).all():
-            raise ValueError('Not all values of audio_data are finite!')
-
-        if value.ndim > 1 and value.shape[constants.CHAN_INDEX] > value.shape[constants.LEN_INDEX]:
-            warnings.warn('self.audio_data is not as we expect it. Transposing signal...')
-            value = value.T
-
-        if value.ndim > 2:
-            raise ValueError('self.audio_data cannot have more than 2 dimensions!')
-
-        if value.ndim < 2:
-            value = np.expand_dims(value, axis=constants.CHAN_INDEX)
-
-        self._audio_data = value
-
+        self._audio_data = utils._verify_audio_data(value)
         self.set_active_region_to_default()
 
     @property

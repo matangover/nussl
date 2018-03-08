@@ -18,7 +18,8 @@ __all__ = ['find_peak_indices', 'find_peak_values',
            'add_mismatched_arrays', 'add_mismatched_arrays2D', 'complex_randn',
            '_get_axis',
            'verify_audio_signal_list_lax', 'verify_audio_signal_list_strict', 'verify_separation_base_list',
-           'verify_mask_separation_base_list']
+           'verify_mask_separation_base_list',
+           '_verify_audio_data', '_verify_representation_data']
 
 
 def find_peak_indices(input_array, n_peaks, min_dist=None, do_min=False, threshold=0.5):
@@ -476,3 +477,55 @@ def verify_mask_separation_base_list(mask_separation_list):
         raise ValueError('All separation objects must be MaskSeparationBase-derived objects!')
 
     return mask_separation_list
+
+
+def _verify_audio_data(audio_data):
+    """
+    A helper method to make sure that input audio data is formatted correctly. This checks if
+    `audio_data` is a numpy array, then if it's all finite
+    Args:
+        audio_data (:obj:`np.ndarray`): A numpy array with audio-data. Can be  1 or 2 dimensional
+
+    Returns:
+        Correctly formatted `audio_data` array or `None` if `audio_data` is `None`
+
+    """
+    if audio_data is None:
+        return None
+
+    elif not isinstance(audio_data, np.ndarray):
+        raise ValueError('Type of audio_data must be of type np.ndarray!')
+
+    if not np.isfinite(audio_data).all():
+        raise ValueError('Not all values of audio_data are finite!')
+
+    if audio_data.ndim > 1 and audio_data.shape[constants.CHAN_INDEX] > audio_data.shape[constants.LEN_INDEX]:
+        warnings.warn('audio_data is not as we expect it. Transposing signal...')
+        audio_data = audio_data.T
+
+    if audio_data.ndim > 2:
+        raise ValueError('audio_data cannot have more than 2 dimensions!')
+
+    if audio_data.ndim < 2:
+        audio_data = np.expand_dims(audio_data, axis=constants.CHAN_INDEX)
+
+    return audio_data
+
+
+def _verify_representation_data(representation_data):
+    if representation_data is None:
+        return None
+
+    elif not isinstance(representation_data, np.ndarray):
+        raise ValueError('Type of representation_data must be of type np.ndarray!')
+
+    if representation_data.ndim == 1:
+        raise ValueError('Cannot support arrays with less than 2 dimensions!')
+
+    if representation_data.ndim == 2:
+        representation_data = np.expand_dims(representation_data, axis=constants.STFT_CHAN_INDEX)
+
+    if representation_data.ndim > 3:
+        raise ValueError('Cannot support arrays with more than 3 dimensions!')
+
+    return representation_data
