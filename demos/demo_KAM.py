@@ -27,7 +27,7 @@ x3 = (x1 + x2).T
 
 # spectrogram
 WL = 1024
-sig = AudioSignal(audiosig=x3, fs=fs)
+sig = AudioSignal()
 sig.makeplot = 1
 sig.fmaxplot = fs / 2
 sig.windowlength = WL
@@ -60,10 +60,10 @@ shat, fhat = kam(Inputfile, SourceKernels, Numit, SpecParams)[0:2]
 print time.clock() - start_time, "seconds"
 
 # record separated sources in .wav files
-ss1 = AudioSignal(audiosig=shat[:, :, 0], fs=fs)
+ss1 = AudioSignal()
 ss1.writeaudiofile('/Users/fpishdadian/SourceSeparation/Audio Samples/Output/kamOutSource1.wav')
 
-ss2 = AudioSignal(audiosig=shat[:, :, 1], fs=fs)
+ss2 = AudioSignal()
 ss2.writeaudiofile('/Users/fpishdadian/SourceSeparation/Audio Samples/Output/kamOutSource2.wav')
 
 # plot the separated time-domain signals and corresponding power spectral densities
@@ -181,10 +181,10 @@ for numblock in range(1, NB):
 print time.clock() - start_time, "seconds"
 
 # write the separated sources
-ss1 = AudioSignal(audiosig=shat[:, :, 0], fs=fs)
+ss1 = AudioSignal()
 ss1.writeaudiofile('/Users/fpishdadian/SourceSeparation/Audio Samples/Output/kamOutSource1.wav')
 
-ss2 = AudioSignal(audiosig=shat[:, :, 1], fs=fs)
+ss2 = AudioSignal()
 ss2.writeaudiofile('/Users/fpishdadian/SourceSeparation/Audio Samples/Output/kamOutSource2.wav')
 
 # plot the separated time-domain signals and corresponding power spectral dencities

@@ -13,7 +13,7 @@ plt.close('all')
 # load the audio mixture and generate spectrograms
 
 FileName='/Users/fpishdadian/SourceSeparation/Audio Samples/Input/piano_mix2.wav'
-mix=AudioSignal(FileName)
+mix= AudioSignal(FileName)
 
 WinL=2*2048 # 93 ms window
 Ovp=3*WinL/4 # 50% overlap   
@@ -70,7 +70,7 @@ print time.clock() - start_time, "seconds"
 Ns=len(SourceKernels)
 OutPath='/Users/fpishdadian/SourceSeparation/Audio Samples/Output/'
 for i in range(0,Ns):
-    ssi=AudioSignal(audiosig=shat[:,:,i],fs=mix.fs)  
+    ssi= AudioSignal()
     ssi.writeaudiofile(OutPath+'kamHout'+str(i+1)+'.wav')
     
  

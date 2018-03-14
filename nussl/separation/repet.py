@@ -65,7 +65,7 @@ class Repet(mask_separation_base.MaskSeparationBase):
     def __init__(self, input_audio_signal, min_period=None, max_period=None, period=None, high_pass_cutoff=100.0,
                  do_mono=False, use_find_period_complex=False,
                  use_librosa_stft=constants.USE_LIBROSA_STFT, matlab_fidelity=False,
-                 mask_type=mask_separation_base.MaskSeparationBase.SOFT_MASK, mask_threshold=0.5):
+                 mask_type=constants.SOFT_MASK, mask_threshold=0.5):
         super(Repet, self).__init__(input_audio_signal=input_audio_signal, mask_type=mask_type,
                                     mask_threshold=mask_threshold)
 
@@ -159,7 +159,7 @@ class Repet(mask_separation_base.MaskSeparationBase):
         # make a mask and return
         background_mask = np.array(background_mask).transpose((1, 2, 0))
         background_mask = masks.SoftMask(background_mask)
-        if self.mask_type == self.BINARY_MASK:
+        if self.mask_type == constants.BINARY_MASK:
             background_mask = background_mask.mask_to_binary(self.mask_threshold)
 
         self.result_masks = [background_mask, background_mask.inverse_mask()]

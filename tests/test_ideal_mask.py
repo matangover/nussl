@@ -17,9 +17,9 @@ class IdealMaskTestCase(unittest.TestCase):
         vocals_path = os.path.join('..', 'input', 'mixture', 'vocals.wav')
         drums_path = os.path.join('..', 'input', 'mixture', 'drums.wav')
 
-        self.premade_mixture = nussl.AudioSignal(premade_mixture_path, duration=dur, offset=offset)
-        self.vocals = nussl.AudioSignal(vocals_path, duration=dur, offset=offset)
-        self.drums = nussl.AudioSignal(drums_path, duration=dur, offset=offset)
+        self.premade_mixture = nussl.AudioSignal(premade_mixture_path, offset=offset, duration=dur)
+        self.vocals = nussl.AudioSignal(vocals_path, offset=offset, duration=dur)
+        self.drums = nussl.AudioSignal(drums_path, offset=offset, duration=dur)
         self.new_mixture = self.vocals + self.drums
 
     def test_setup(self):
@@ -83,7 +83,7 @@ class IdealMaskTestCase(unittest.TestCase):
             for ch in range(mask.num_channels):
                 plt.close('all')
                 im = plt.imshow(mask.get_channel(ch))
-                if nussl.MaskSeparationBase.SOFT_MASK in name.lower():
+                if nussl.core.constants.SOFT_MASK in name.lower():
                     plt.colorbar(im)
 
                 plt.axis('tight')

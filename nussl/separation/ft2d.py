@@ -4,8 +4,8 @@
 import numpy as np
 from scipy.ndimage.filters import maximum_filter, minimum_filter
 
-from ..core.audio_signal import AudioSignal
-from ..core import constants
+import nussl.core.audio_signal
+from nussl.core import constants
 import separation_base
 
 
@@ -65,15 +65,11 @@ class FT2D(separation_base.SeparationBase):
             background_stft.append(stft_with_mask)
 
         background_stft = np.array(background_stft).transpose((1, 2, 0))
-        self.background = AudioSignal(stft=background_stft, sample_rate=self.audio_signal.sample_rate)
+        self.background = nussl.core.audio_signal.AudioSignal(representation=background_stft,
+                                                              sample_rate=self.audio_signal.sample_rate)
         self.background.istft(self.stft_params.window_length, self.stft_params.hop_length, self.stft_params.window_type,
                               overwrite=True, use_librosa=self.use_librosa_stft,
                               truncate_to_length=self.audio_signal.signal_length)
-
-        # Ethan: Not sure that this is necessary anymore...
-        # if self.background.signal_length > self.audio_signal.signal_length:
-        #     self.background.set_active_region_to_default()
-        #     self.background.crop_signal(0, self.background.signal_length - self.audio_signal.signal_length)
 
         return self.background
     

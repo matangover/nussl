@@ -9,6 +9,7 @@ from __future__ import division
 import numpy as np
 import scipy.signal
 
+from ..core import constants
 import mask_separation_base
 from ideal_mask import IdealMask
 
@@ -20,7 +21,7 @@ class HighLowPassFilter(mask_separation_base.MaskSeparationBase):
 
     def __init__(self, input_audio_signal, high_pass_cutoff_hz, do_fir_filter=True,
                  force_recompute_stft=False,
-                 mask_type=mask_separation_base.MaskSeparationBase.BINARY_MASK):
+                 mask_type=constants.BINARY_MASK):
         super(HighLowPassFilter, self).__init__(input_audio_signal=input_audio_signal, mask_type=mask_type)
         self.high_pass_cutoff_hz = high_pass_cutoff_hz
 

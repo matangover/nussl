@@ -1,24 +1,25 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Provides utilities for running nussl algorithms that do not belong to any specific algorithm or that are shared
-between algorithms.
-
+Provides utilities for running nussl algorithms that do not belong to
+any specific algorithm or that are shared between algorithms.
 """
 import base64
 import json
 import warnings
+import re
 
 import numpy as np
 
 import constants
 
 __all__ = ['find_peak_indices', 'find_peak_values',
-           'json_ready_numpy_array', 'json_serialize_numpy_array', 'load_numpy_json', 'json_numpy_obj_hook',
+           'json_ready_numpy_array', 'json_serialize_numpy_array', 'load_numpy_json',
+           'json_numpy_obj_hook',
            'add_mismatched_arrays', 'add_mismatched_arrays2D', 'complex_randn',
            '_get_axis',
-           'verify_audio_signal_list_lax', 'verify_audio_signal_list_strict', 'verify_separation_base_list',
-           'verify_mask_separation_base_list',
+           'verify_audio_signal_list_lax', 'verify_audio_signal_list_strict',
+           'verify_separation_base_list', 'verify_mask_separation_base_list',
            '_verify_audio_data', '_verify_representation_data']
 
 
@@ -111,8 +112,10 @@ def find_peak_indices(input_array, n_peaks, min_dist=None, do_min=False, thresho
             input_array[lower:upper] = 0
         else:
             peak_indices.append(cur_peak_idx)
-            lower0, upper0 = _set_array_zero_indices(cur_peak_idx[0], zero_dist0, input_array.shape[0])
-            lower1, upper1 = _set_array_zero_indices(cur_peak_idx[1], zero_dist1, input_array.shape[1])
+            lower0, upper0 = _set_array_zero_indices(cur_peak_idx[0], zero_dist0,
+                                                     input_array.shape[0])
+            lower1, upper1 = _set_array_zero_indices(cur_peak_idx[1], zero_dist1,
+                                                     input_array.shape[1])
             input_array[lower0:upper0, lower1:upper1] = 0
 
         if np.sum(input_array) == 0.0:
@@ -172,9 +175,11 @@ def find_peak_values(input_array, n_peaks, min_dist=None, do_min=False, threshol
         raise ValueError('Cannot find peak indices on data greater than 2 dimensions!')
 
     if input_array.ndim == 1:
-        return [input_array[i] for i in find_peak_indices(input_array, n_peaks, min_dist, do_min, threshold)]
+        return [input_array[i] for i in find_peak_indices(input_array, n_peaks, min_dist,
+                                                          do_min, threshold)]
     else:
-        return [input_array[i, j] for i, j in find_peak_indices(input_array, n_peaks, min_dist, do_min, threshold)]
+        return [input_array[i, j] for i, j in find_peak_indices(input_array, n_peaks, min_dist,
+                                                                do_min, threshold)]
 
 
 def json_ready_numpy_array(array):
@@ -375,10 +380,23 @@ def _get_axis(array, axis_num, i):
         return None
 
 
+def CamelCase_to_snake_case(text):
+    s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', text)
+    return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
+
+
+def _format(string):
+    """ Formats a class name correctly for checking function and class names.
+        Strips all non-alphanumeric chars and makes lowercase.
+    """
+    return str(filter(str.isalnum, string)).lower()
+
+
 def verify_audio_signal_list_lax(audio_signal_list):
     """
-    Verifies that an input (audio_signal_list) is a list of :ref:`AudioSignal` objects. If not so, attempts
-    to correct the list (if possible) and returns the corrected list.
+    Verifies that an input (audio_signal_list) is a list of :ref:`AudioSignal` objects.
+    If not so, attempts to correct the list (if possible) and returns the corrected list.
+
     Args:
         audio_signal_list (list): List of :ref:`AudioSignal` objects
 
@@ -404,9 +422,9 @@ def verify_audio_signal_list_lax(audio_signal_list):
 
 def verify_audio_signal_list_strict(audio_signal_list):
     """
-    Verifies that an input (audio_signal_list) is a list of :ref:`AudioSignal` objects and that they all have the same
-    sample rate and same number of channels. If not true, attempts to correct the list (if possible) and returns
-    the corrected list.
+    Verifies that an input (audio_signal_list) is a list of :ref:`AudioSignal` objects and
+    that they all have the same sample rate and same number of channels. If not true,
+    attempts to correct the list (if possible) and returns the corrected list.
 
     Args:
         audio_signal_list (list): List of :ref:`AudioSignal` objects
@@ -429,8 +447,8 @@ def verify_audio_signal_list_strict(audio_signal_list):
 
 def verify_separation_base_list(separation_list):
     """
-    Verifies that all items in `separation_list` are :ref:`SeparationBase` -derived objects. If not so, attempts
-    to correct the list if possible and returns the corrected list.
+    Verifies that all items in `separation_list` are :ref:`SeparationBase` -derived objects.
+    If not so, attempts to correct the list if possible and returns the corrected list.
 
     Args:
         separation_list: (list) List of :ref:`SeparationBase` -derived objects
@@ -455,8 +473,8 @@ def verify_separation_base_list(separation_list):
 
 def verify_mask_separation_base_list(mask_separation_list):
     """
-    Verifies that all items in `separation_list` are :ref:`MaskSeparationBase` -derived objects. If not so, attempts
-    to correct the list if possible and returns the corrected list.
+    Verifies that all items in `separation_list` are :ref:`MaskSeparationBase` -derived objects.
+    If not so, attempts to correct the list if possible and returns the corrected list.
 
     Args:
         mask_separation_list: (list) List of :ref:`MaskSeparationBase` -derived objects
@@ -499,7 +517,8 @@ def _verify_audio_data(audio_data):
     if not np.isfinite(audio_data).all():
         raise ValueError('Not all values of audio_data are finite!')
 
-    if audio_data.ndim > 1 and audio_data.shape[constants.CHAN_INDEX] > audio_data.shape[constants.LEN_INDEX]:
+    if audio_data.ndim > 1 \
+            and audio_data.shape[constants.CHAN_INDEX] > audio_data.shape[constants.LEN_INDEX]:
         warnings.warn('audio_data is not as we expect it. Transposing signal...')
         audio_data = audio_data.T
 

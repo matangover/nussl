@@ -14,8 +14,8 @@ class BSSEvalImages(bss_eval_base.BSSEvalBase):
 
     """
 
-    def __init__(self, true_sources_list, estimated_sources_list, source_labels=None, algorithm_name=None,
-                 do_mono=False, compute_permutation=True):
+    def __init__(self, true_sources_list, estimated_sources_list, source_labels=None,
+                 algorithm_name=None, do_mono=False, compute_permutation=True):
         super(BSSEvalImages, self).__init__(true_sources_list=true_sources_list,
                                             estimated_sources_list=estimated_sources_list,
                                             source_labels=source_labels, do_mono=do_mono,
@@ -38,8 +38,8 @@ class BSSEvalImages(bss_eval_base.BSSEvalBase):
         assert len(sdr_list) == len(sir_list) \
                == len(sar_list) == len(isr_list) == len(self.true_sources_list) * self.num_channels
 
-        self.scores[self.RAW_VALUES] = {self.SDR: sdr_list, self.ISR: isr_list, self.SIR: sir_list, self.SAR: sar_list,
-                                        self.PERMUTATION: perm}
+        self.scores[self.RAW_VALUES] = {self.SDR: sdr_list, self.ISR: isr_list, self.SIR: sir_list,
+                                        self.SAR: sar_list, self.PERMUTATION: perm}
 
         idx = 0
         for i, label in enumerate(self.source_labels):

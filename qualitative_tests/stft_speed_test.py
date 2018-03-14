@@ -48,13 +48,13 @@ def speed_test():
             l_end = time.time() - l_st
             librosa_stft_times[cur_len].append(l_end)
 
-            a = nussl.AudioSignal(stft=nussl_stft)
+            a = nussl.AudioSignal(representation=nussl_stft)
             n_st = time.time()
             a.istft(use_librosa=False)
             n_end = time.time() - n_st
             nussl_istft_times[cur_len].append(n_end)
 
-            a = nussl.AudioSignal(stft=librosa_stft)
+            a = nussl.AudioSignal(representation=librosa_stft)
             l_st = time.time()
             a.istft(use_librosa=True)
             l_end = time.time() - l_st

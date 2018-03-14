@@ -13,7 +13,7 @@ import mask_separation_base
 import masks
 from ..core import utils
 from ..core import constants
-from ..core.audio_signal import AudioSignal
+import nussl.core.audio_signal
 
 
 class Duet(mask_separation_base.MaskSeparationBase):
@@ -77,7 +77,7 @@ class Duet(mask_separation_base.MaskSeparationBase):
                  delay_min=-3, delay_max=3, num_delay_bins=50,
                  peak_threshold=0.2, attenuation_min_distance=5, delay_min_distance=5, p=1, q=0):
         super(Duet, self).__init__(input_audio_signal=input_audio_signal,
-                                   mask_type=mask_separation_base.MaskSeparationBase.BINARY_MASK)
+                                   mask_type=constants.BINARY_MASK)
 
         if not self.audio_signal.is_stereo:
             raise ValueError('Duet requires that the input_audio_signal has exactly 2 channels!')
@@ -443,7 +443,7 @@ class Duet(mask_separation_base.MaskSeparationBase):
             new_sig = new_sig.apply_mask(self.result_masks[i])
             new_sig.stft_params = self.stft_params
             source_estimate = new_sig.istft(overwrite=True, truncate_to_length=self.audio_signal.signal_length)
-            cur_signal = AudioSignal(audio_data_array=source_estimate, sample_rate=self.sample_rate)
+            cur_signal = nussl.core.audio_signal.AudioSignal(audio_data_array=source_estimate, sample_rate=self.sample_rate)
             signals.append(cur_signal)
         return signals
 
@@ -452,8 +452,8 @@ class Duet(mask_separation_base.MaskSeparationBase):
 
         Parameters:
             output_name (str): path to save plot as
-            three_d_plot (Optional[bool]): Flags whether or not to plot in 3d. Defaults to False
-            normalize (Optional[bool]): Flags whether the matrix should be normalized or not
+            three_d_plot (bool): Flags whether or not to plot in 3d. Defaults to False
+            normalize (bool): Flags whether the matrix should be normalized or not
         """
         plt.close('all')
 

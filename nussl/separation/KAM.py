@@ -22,7 +22,7 @@ import matplotlib.pyplot as plt
 plt.interactive('True')
 import scipy.ndimage.filters
 import scipy
-from ..core.audio_signal import AudioSignal
+import nussl.core.audio_signal
 
 
 def kam(Inputfile, SourceKernels, Numit=1, SpecParams=np.array([]), FullKernel=False):
@@ -94,9 +94,9 @@ def kam(Inputfile, SourceKernels, Numit=1, SpecParams=np.array([]), FullKernel=F
     # Step (1): 
     # Load the audio mixture from the input path
     if len(Inputfile) == 2:
-        Mixture = AudioSignal(audiosig=Inputfile[0], fs=Inputfile[1])
+        Mixture = nussl.core.audio_signal.AudioSignal()
     elif len(Inputfile) == 3:
-        Mixture = AudioSignal(file_name=Inputfile[0], siglen=Inputfile[1], sigstart=Inputfile[2])
+        Mixture = nussl.core.audio_signal.AudioSignal()
 
     if len(SpecParams) != 0:
         for i in range(0, len(SpecParams.dtype)):
@@ -272,7 +272,7 @@ def kam(Inputfile, SourceKernels, Numit=1, SpecParams=np.array([]), FullKernel=F
 
     # Compute the inverse_mask stft of the estimated sources
     shat = np.zeros((x.shape[0], I, J))
-    sigTemp = AudioSignal()
+    sigTemp = nussl.core.audio_signal.AudioSignal()
     sigTemp.windowtype = Mixture.windowtype
     sigTemp.windowlength = Mixture.windowlength
     sigTemp.overlap_samples = Mixture.overlap_samples
@@ -295,7 +295,7 @@ def kaml(Inputfile, SourceKernels, AlgParams=np.array([10, 1]), Numit=1, SpecPar
                - Up to 3 elements: A string indicating the path of the .wav file containing 
                  the I-channel audio mixture as the first element. The second (optional) 
                  element indicates the length of the portion of the signal to be extracted 
-                 in seconds(defult is the full lengths of the siganl) The third (optional) 
+                 in seconds(defualt is the full lengths of the signal) The third (optional)
                  element indicates the starting point of the portion of the signal to be 
                  extracted (default is 0 sec).
                OR
@@ -357,9 +357,9 @@ def kaml(Inputfile, SourceKernels, AlgParams=np.array([10, 1]), Numit=1, SpecPar
     # Step (1): 
     # Load the audio mixture from the input path
     if len(Inputfile) == 2:
-        Mixture = AudioSignal(audiosig=Inputfile[0], fs=Inputfile[1])
+        Mixture = nussl.core.audio_signal.AudioSignal()
     elif len(Inputfile) == 3:
-        Mixture = AudioSignal(file_name=Inputfile[0], siglen=Inputfile[1], sigstart=Inputfile[2])
+        Mixture = nussl.core.audio_signal.AudioSignal()
 
     numcomp, gamma = AlgParams
 
@@ -557,7 +557,7 @@ def kaml(Inputfile, SourceKernels, AlgParams=np.array([10, 1]), Numit=1, SpecPar
 
     # Compute the inverse_mask stft of the estimated sources
     shat = np.zeros((x.shape[0], I, J))
-    sigTemp = AudioSignal()
+    sigTemp = nussl.core.audio_signal.AudioSignal()
     sigTemp.windowtype = Mixture.windowtype
     sigTemp.windowlength = Mixture.windowlength
     sigTemp.overlap_samples = Mixture.overlap_samples

@@ -6,7 +6,7 @@ import sklearn
 
 import separation_base
 from ..core import constants
-from ..core.audio_signal import AudioSignal
+import nussl.core.audio_signal
 from ..core import utils
 
 
@@ -74,11 +74,12 @@ class ICA(separation_base.SeparationBase):
 
         """
         assert isinstance(observations, np.ndarray), 'Observations must be a numpy array!'
-        if observations.ndim > 1\
+        if observations.ndim > 1 \
                 and observations.shape[constants.CHAN_INDEX] > observations.shape[constants.LEN_INDEX]:
             observations = observations.T
 
-        return AudioSignal(audio_data_array=observations, sample_rate=sample_rate)
+        return nussl.core.audio_signal.AudioSignal(audio_data_array=observations,
+                                                   sample_rate=sample_rate)
 
     @staticmethod
     def audio_signal_observations_to_audio_signal(observations):
@@ -99,7 +100,8 @@ class ICA(separation_base.SeparationBase):
             raise ValueError('All AudioSignals in observations_list must be mono!')
 
         observation_data = np.vstack([o.audio_data for o in observations])
-        return AudioSignal(audio_data_array=observation_data, sample_rate=observations[0].sample_rate)
+        return nussl.core.audio_signal.AudioSignal(audio_data_array=observation_data,
+                                                   sample_rate=observations[0].sample_rate)
 
     @staticmethod
     def _get_default_or_key(default_value, key, dict_):
@@ -138,8 +140,8 @@ class ICA(separation_base.SeparationBase):
         # store the resultant computations
         self.estimated_mixing_params = ica.mixing_
         self.mean = ica.mean_
-        self.estimated_sources = [AudioSignal(audio_data_array=ica_output[i, :],
-                                              sample_rate=self.audio_signal.sample_rate)
+        self.estimated_sources = [nussl.core.audio_signal.AudioSignal(audio_data_array=ica_output[i, :],
+                                                                      sample_rate=self.audio_signal.sample_rate)
                                   for i in range(ica_output.shape[0])]
 
         return self.estimated_sources

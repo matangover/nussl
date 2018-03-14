@@ -12,8 +12,8 @@ except:
     import nussl
 
 
-mixture = nussl.AudioSignal('../input/mixture/mixture.wav', duration=30, offset=60)
-vocals = nussl.AudioSignal('../input/mixture/vocals.wav', duration=30, offset=60)
+mixture = nussl.AudioSignal('../input/mixture/mixture.wav', offset=60, duration=30)
+vocals = nussl.AudioSignal('../input/mixture/vocals.wav', offset=60, duration=30)
 background = mixture - vocals
 print str(mixture)
 

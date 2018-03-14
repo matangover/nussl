@@ -5,14 +5,15 @@
 Base class for separation algorithms that make masks. Most algorithms in nussl are derived from MaskSeparationBase. 
 
 """
-import json
 import warnings
+
+import jsonpickle
+import jsonpickle.ext.numpy as jsonpickle_numpy
+jsonpickle_numpy.register_handlers()
 
 import masks
 import separation_base
-from ..core import utils
-from ..core import audio_signal
-from ..core import constants
+from nussl.core import constants
 
 
 class MaskSeparationBase(separation_base.SeparationBase):
@@ -35,18 +36,9 @@ class MaskSeparationBase(separation_base.SeparationBase):
             :attr:`mask_threshold` property for details.
     
     """
+    _valid_mask_types = [constants.BINARY_MASK, constants.SOFT_MASK]
 
-    BINARY_MASK = 'binary'
-    """ String alias for setting this object to return :class:`separation.masks.binary_mask.BinaryMask` objects
-    """
-
-    SOFT_MASK = 'soft'
-    """ String alias for setting this object to return :class:`separation.masks.soft_mask.SoftMask` objects
-    """
-
-    _valid_mask_types = [BINARY_MASK, SOFT_MASK]
-
-    def __init__(self, input_audio_signal, mask_type=SOFT_MASK, mask_threshold=0.5):
+    def __init__(self, input_audio_signal, mask_type=constants.SOFT_MASK, mask_threshold=0.5):
         super(MaskSeparationBase, self).__init__(input_audio_signal=input_audio_signal)
 
         self._mask_type = None
@@ -140,9 +132,9 @@ class MaskSeparationBase(separation_base.SeparationBase):
 
         elif issubclass(value, masks.MaskBase):
             if value is masks.BinaryMask:
-                self._mask_type = self.BINARY_MASK
+                self._mask_type = constants.BINARY_MASK
             elif value is masks.SoftMask:
-                self._mask_type = self.SOFT_MASK
+                self._mask_type = constants.SOFT_MASK
             else:
                 raise error
 
@@ -186,7 +178,7 @@ class MaskSeparationBase(separation_base.SeparationBase):
         Returns:
 
         """
-        if self.mask_type == self.BINARY_MASK:
+        if self.mask_type == constants.BINARY_MASK:
             return masks.BinaryMask.zeros(shape)
         else:
             return masks.SoftMask.zeros(shape)
@@ -200,7 +192,7 @@ class MaskSeparationBase(separation_base.SeparationBase):
         Returns:
 
         """
-        if self.mask_type == self.BINARY_MASK:
+        if self.mask_type == constants.BINARY_MASK:
             return masks.BinaryMask.ones(shape)
         else:
             return masks.SoftMask.ones(shape)
@@ -246,39 +238,4 @@ class MaskSeparationBase(separation_base.SeparationBase):
             :func:`to_json` to make a JSON string to freeze this object.
 
         """
-        mask_sep_decoder = MaskSeparationBaseDecoder(cls)
-        return mask_sep_decoder.decode(json_string)
-
-
-class MaskSeparationBaseDecoder(separation_base.SeparationBaseDecoder):
-    """ Object to decode a :class:`MaskSeparationBase`-derived object from JSON serialization.
-    You should never have to instantiate this object by hand.
-    """
-
-    def __init__(self, separation_class):
-        self.separation_class = separation_class
-        json.JSONDecoder.__init__(self, object_hook=self._json_separation_decoder)
-
-    def _json_separation_decoder(self, json_dict):
-        if '__class__' in json_dict and '__module__' in json_dict:
-            json_dict, separator = self._inspect_json_and_create_new_instance(json_dict)
-
-            # fill out the rest of the fields
-            for k, v in json_dict.items():
-                if isinstance(v, dict) and constants.NUMPY_JSON_KEY in v:
-                    separator.__dict__[k] = utils.json_numpy_obj_hook(v[constants.NUMPY_JSON_KEY])
-                    
-                # TODO: test this in python3
-                elif isinstance(v, (str, bytes, unicode)) and audio_signal.__name__ in v:
-
-                    separator.__dict__[k] = audio_signal.AudioSignal.from_json(v)
-                elif k == 'result_masks':
-                    # for mask_json in v:
-
-                    separator.result_masks = [masks.MaskBase.from_json(itm) for itm in v]
-                else:
-                    separator.__dict__[k] = v if not isinstance(v, unicode) else v.encode('ascii')
-
-            return separator
-        else:
-            return json_dict
+        return jsonpickle.decode(json_string)

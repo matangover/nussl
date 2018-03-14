@@ -7,6 +7,7 @@ import numpy as np
 import sklearn.cluster
 import librosa
 
+from ..core import constants
 from ..transformers import transformer_nmf
 import mask_separation_base
 import masks
@@ -102,7 +103,7 @@ class NMF_MFCC(mask_separation_base.MaskSeparationBase):
         """
     def __init__(self, input_audio_signal, num_sources, num_templates=50, num_iterations=50, random_seed=None,
                  distance_measure=transformer_nmf.TransformerNMF.EUCLIDEAN, kmeans_kwargs=None, to_mono=False,
-                 mask_type=mask_separation_base.MaskSeparationBase.BINARY_MASK, mfcc_range=(1, 14), n_mfcc=20):
+                 mask_type=constants.BINARY_MASK, mfcc_range=(1, 14), n_mfcc=20):
         super(NMF_MFCC, self).__init__(input_audio_signal=input_audio_signal, mask_type=mask_type)
 
         self.num_sources = num_sources
@@ -202,10 +203,10 @@ class NMF_MFCC(mask_separation_base.MaskSeparationBase):
         # Put each numpy array mask into a MaskBase object
         self.result_masks = []
         for mask in collated_masks:
-            if self.mask_type == self.BINARY_MASK:
+            if self.mask_type == constants.BINARY_MASK:
                 mask = np.round(mask)
                 mask_object = masks.BinaryMask(mask)
-            elif self.mask_type == self.SOFT_MASK:
+            elif self.mask_type == constants.SOFT_MASK:
                 mask_object = masks.SoftMask(mask)
             else:
                 raise ValueError('Unknown mask type {}!'.format(self.mask_type))

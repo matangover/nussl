@@ -15,6 +15,7 @@ __all__ = ['DEFAULT_SAMPLE_RATE', 'DEFAULT_WIN_LEN_PARAM', 'DEFAULT_BIT_DEPTH',
 
 DEFAULT_SAMPLE_RATE = 44100  #: (int): Default sample rate. 44.1 kHz, CD-quality
 DEFAULT_WIN_LEN_PARAM = 0.04  #: (float): Default window length. 40ms
+DEFAULT_WIN_LENGTH = 2048  #: (int): Default window length, 2048 samples.
 DEFAULT_BIT_DEPTH = 16  #: (int): Default bit depth. 16-bits, CD-quality
 DEFAULT_MAX_VAL = 2 ** 16  #: (int): Max value of 16-bit audio file (unsigned)
 EPSILON = 1e-16  #: (float): epsilon for determining small values
@@ -33,10 +34,18 @@ ALL_WINDOWS = [WINDOW_HAMMING, WINDOW_RECTANGULAR, WINDOW_HANN, WINDOW_BLACKMAN,
 
 NUMPY_JSON_KEY = "py/numpy.ndarray"  #: (str): key used when turning numpy arrays into json
 
+BINARY_MASK = 'binary'
+""" String alias for setting this object to return :class:`separation.masks.binary_mask.BinaryMask` objects
+"""
+
+SOFT_MASK = 'soft'
+""" String alias for setting this object to return :class:`separation.masks.soft_mask.SoftMask` objects
+"""
+
 # ############# Array Indices ############# #
 
 # audio_data
-LEN_INDEX  = 1  #: (int): Index of the number of samples in an audio signal. Used in :ref:`audio_signal`
+LEN_INDEX = 1  #: (int): Index of the number of samples in an audio signal. Used in :ref:`audio_signal`
 CHAN_INDEX = 0  #: (int): Index of the number of channels in an audio signal. Used in :ref:`audio_signal`
 
 # stft_data
@@ -45,7 +54,7 @@ STFT_VERT_INDEX = 0
 (int) Index of the number of frequency (vertical) values in a time-frequency representation. 
 Used in :ref:`audio_signal` and in :ref:`mask_base`.
 """
-STFT_LEN_INDEX  = 1
+STFT_LEN_INDEX = 1
 """
 (int) Index of the number of time (horizontal) hops in a time-frequency representation. 
 Used in :ref:`audio_signal` and in :ref:`mask_base`.

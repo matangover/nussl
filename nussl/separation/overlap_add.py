@@ -9,6 +9,7 @@ import numpy as np
 
 import separation_base
 from ..core import stft_utils
+from ..core import utils
 from ..core import constants
 
 from ft2d import FT2D
@@ -112,7 +113,7 @@ class OverlapAdd(separation_base.SeparationBase):
     def _valid_methods_lower():
         """Case invariant (lowercase) version of self._valid_separation_methods dictionary.
         """
-        return {OverlapAdd._format(name): obj for name, obj in OverlapAdd._valid_separation_methods.items()}
+        return {utils._format(name): obj for name, obj in OverlapAdd._valid_separation_methods.items()}
 
     @property
     def separation_method_name(self):
@@ -150,9 +151,9 @@ class OverlapAdd(separation_base.SeparationBase):
             raise error
 
         if isinstance(value, str):
-            if self._format(value) in self._valid_methods_lower().keys():
+            if utils._format(value) in self._valid_methods_lower().keys():
                 # The user input a string with a valid method name. It should be in our dictionary
-                self._separation_method = self._valid_methods_lower()[self._format(value)]
+                self._separation_method = self._valid_methods_lower()[utils._format(value)]
             else:
                 # Oops. Can't find it in our dictionary
                 raise error
@@ -166,13 +167,6 @@ class OverlapAdd(separation_base.SeparationBase):
             raise error
 
         self._setup_instance()
-
-    @staticmethod
-    def _format(string):
-        """ Formats a class name correctly for self._valid_methods_lower.
-            Strips all non-alphanumeric chars and makes lowercase.
-        """
-        return str(filter(str.isalnum, string)).lower()
 
     @property
     def separation_instance(self):

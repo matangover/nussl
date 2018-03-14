@@ -16,7 +16,7 @@ import scipy.signal
 import constants
 
 __all__ = ['plot_stft', 'e_stft', 'e_istft', 'e_stft_plus', 'librosa_stft_wrapper', 'librosa_istft_wrapper',
-           'make_window', 'StftParams']
+           'make_window']
 
 
 def plot_stft(signal, file_name, title=None, win_length=None, hop_length=None,

@@ -6,12 +6,24 @@ import unittest
 
 import os
 import copy
+import sys
 
 import numpy as np
 import scipy.io.wavfile as wav
 import librosa
 
-import nussl
+try:
+    # import from an already installed version
+    import nussl
+except:
+
+    # can't find an installed version, import from right next door...
+    path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    if not path in sys.path:
+        sys.path.insert(1, path)
+
+    import nussl
+
 
 
 class AudioSignalUnitTests(unittest.TestCase):
@@ -27,6 +39,7 @@ class AudioSignalUnitTests(unittest.TestCase):
                            if os.path.splitext(f)[1] == ext]
 
         self.input_path1 = os.path.join(input_folder, 'k0140_int.wav')
+        self.input_path1 = '/Users/ethanmanilow/Documents/Github/SourceSeparationPyCharm/SourceSeparation/input/K0140.wav'
         self.input_path2 = os.path.join(input_folder, 'k0140.wav')
         self.input_path3 = os.path.join(input_folder, 'dev1_female3_inst_mix.wav')
 
@@ -443,6 +456,29 @@ class AudioSignalUnitTests(unittest.TestCase):
         d = copy.copy(a)
         d /= 2
         self.assertTrue(np.allclose(c.audio_data, d.audio_data))
+
+    def test_representation(self):
+
+        test_file = librosa.util.example_audio_file()
+
+        a = nussl.AudioSignal(test_file, representation='stft')
+
+        stft_new = a.stft.forward()
+        stft_old = a.do_stft()
+
+        a = nussl.AudioSignal(test_file, representation=nussl.core.representations.STFT)
+
+        stft_default = a.representation_forward()
+
+        stft = nussl.core.representations.STFT(window_length=1024, hop_length=512, n_fft_bins=1024)
+        a = nussl.AudioSignal(test_file, representation=stft)
+
+        b = nussl.AudioSignal(test_file, representation='mel_spectrogram')
+
+        b.representation_forward()
+        b.mel_spectrogram_forward()
+
+        i = 0
 
 
 

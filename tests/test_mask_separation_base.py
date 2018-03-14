@@ -39,29 +39,29 @@ class MaskSeparationBaseUnitTests(unittest.TestCase):
         # all valid ways
         mask_type = 'BiNaRy'
         mask_separator = nussl.MaskSeparationBase(sig, mask_type)
-        assert mask_separator.mask_type == nussl.MaskSeparationBase.BINARY_MASK
+        assert mask_separator.mask_type == nussl.core.constants.BINARY_MASK
 
         mask_type = nussl.separation.BinaryMask
         mask_separator = nussl.MaskSeparationBase(sig, mask_type)
-        assert mask_separator.mask_type == nussl.MaskSeparationBase.BINARY_MASK
+        assert mask_separator.mask_type == nussl.core.constants.BINARY_MASK
 
         # with self.assertRaises(warnings.warn):
         mask_type = nussl.separation.BinaryMask(np.zeros(shape=(512, 1024)))
         mask_separator = nussl.MaskSeparationBase(sig, mask_type)
-        assert mask_separator.mask_type == nussl.MaskSeparationBase.BINARY_MASK
+        assert mask_separator.mask_type == nussl.core.constants.BINARY_MASK
 
         mask_type = 'SOFT'
         mask_separator = nussl.MaskSeparationBase(sig, mask_type)
-        assert mask_separator.mask_type == nussl.MaskSeparationBase.SOFT_MASK
+        assert mask_separator.mask_type == nussl.core.constants.SOFT_MASK
 
         mask_type = nussl.separation.SoftMask
         mask_separator = nussl.MaskSeparationBase(sig, mask_type)
-        assert mask_separator.mask_type == nussl.MaskSeparationBase.SOFT_MASK
+        assert mask_separator.mask_type == nussl.core.constants.SOFT_MASK
 
         # with self.assertRaises(warnings.warn):
         mask_type = nussl.separation.SoftMask(np.zeros(shape=(512, 1024)))
         mask_separator = nussl.MaskSeparationBase(sig, mask_type)
-        assert mask_separator.mask_type == nussl.MaskSeparationBase.SOFT_MASK
+        assert mask_separator.mask_type == nussl.core.constants.SOFT_MASK
 
     def test_not_implemented(self):
         """

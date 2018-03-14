@@ -1,16 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Base class for invertible representations in nussl
+Base class for all representations in nussl
 """
-from __future__ import division
 
 import numpy as np
 import scipy.signal
 
-from .. import utils
-from .. import constants
-import nussl.separation.masks
+from ...core import constants
+from ...core import utils
+from ...separation import masks
 
 
 class InvertibleRepresentationBase(object):
@@ -25,7 +24,6 @@ class InvertibleRepresentationBase(object):
 
         Args:
             audio_data:
-            representation_data:
 
         Returns:
 
@@ -38,57 +36,7 @@ class InvertibleRepresentationBase(object):
         self._audio_data = audio_data
         self._representation_data = representation_data
 
-    @property
-    def is_empty(self):
-        """
-        Returns true if there is no :attr:`audio_data` and no :attr:`representation_data`.
-
-        Returns:
-            `not (:attr:`has_audio_data` or :attr:`has_representation_data`)`
-
-        See Also:
-            :attr:`has_audio_data`, :attr:`has_representation_data`.
-
-        """
-        return not (self.has_audio_data or self.has_representation_data)
-
-    @property
-    def has_audio_data(self):
-        """
-        Returns if this representation has any information in :attr:`audio_data`.
-
-        Returns:
-            True if :attr:`audio_data` is not `None` and :attr:`audio_data.size` > 0.
-
-        See Also:
-            :attr:`has_representation_data`, :attr:`is_empty`.
-
-        """
-        return self.audio_data is not None and self.audio_data.size > 0
-
-    @property
-    def has_representation_data(self):
-        """
-        Returns if this representation has any information in :attr:`representation_data`.
-
-        Returns:
-            True if :attr:`representation_data` is not `None`
-            and :attr:`representation_data.size` > 0.
-
-        See Also:
-            :attr:`has_audio_data`, :attr:`is_empty`.
-
-        """
-        return self.representation_data is not None and self.representation_data.size > 0
-
     def forward(self):
-        """
-
-        Returns:
-
-        """
-
-    def inverse(self):
         """
 
         Returns:
@@ -226,9 +174,9 @@ class InvertibleRepresentationBase(object):
         """
 
         if mask_type == constants.BINARY_MASK:
-            return nussl.separation.masks.BinaryMask.zeros(self.representation_data.shape)
+            return masks.BinaryMask.zeros(self.representation_data.shape)
         else:
-            return nussl.separation.masks.SoftMask.zeros(self.representation_data.shape)
+            return masks.SoftMask.zeros(self.representation_data.shape)
 
     def make_ones_mask(self, mask_type=constants.BINARY_MASK):
         """
@@ -240,9 +188,9 @@ class InvertibleRepresentationBase(object):
         """
 
         if mask_type == constants.BINARY_MASK:
-            return nussl.separation.masks.BinaryMask.ones(self.representation_data.shape)
+            return masks.BinaryMask.ones(self.representation_data.shape)
         else:
-            return nussl.separation.masks.SoftMask.ones(self.representation_data.shape)
+            return masks.SoftMask.ones(self.representation_data.shape)
 
     def apply_mask(self, mask, overwrite=False):
         """
@@ -259,7 +207,7 @@ class InvertibleRepresentationBase(object):
             raise RepresentationBaseException('Cannot apply mask when '
                                               'self.representation_data is empty!')
 
-        if not isinstance(mask, nussl.separation.masks.MaskBase):
+        if not isinstance(mask, masks.MaskBase):
             raise RepresentationBaseException('mask is {} but is expected to be a '
                                               'MaskBase-derived object!'.format(type(mask)))
 
@@ -277,7 +225,4 @@ class InvertibleRepresentationBase(object):
 
 
 class RepresentationBaseException(Exception):
-    """
-    Exception class for RepresentationBase
-    """
     pass

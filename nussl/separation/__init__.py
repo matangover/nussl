@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+"""
+Imports for all separation classes in nussl
+"""
 
 from .masks import *
 from .separation_base import SeparationBase

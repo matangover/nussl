@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Init for ``nussl``, the Northwestern University Source Separation Library.
+Initialization file for ``nussl``, the Northwestern University Source Separation Library.
 """
 
+import core
 from .core.constants import *
 from .core.audio_signal import AudioSignal
 from .core import utils, stft_utils
@@ -27,4 +28,4 @@ __author__ = 'E. Manilow, P. Seetharaman, F. Pishdadian'
 __email__ = 'ethanmanilow@u.northwestern.edu'
 
 __license__ = 'MIT'
-__copyright__ = 'Copyright (c) 2017 Interactive Audio Lab'
+__copyright__ = 'Copyright (c) 2018 Interactive Audio Lab'

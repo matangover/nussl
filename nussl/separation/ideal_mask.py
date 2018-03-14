@@ -79,7 +79,7 @@ class IdealMask(mask_separation_base.MaskSeparationBase):
     """
 
     def __init__(self, input_audio_mixture, sources_list,
-                 mask_type=mask_separation_base.MaskSeparationBase.SOFT_MASK,
+                 mask_type=constants.SOFT_MASK,
                  use_librosa_stft=constants.USE_LIBROSA_STFT):
         super(IdealMask, self).__init__(input_audio_signal=input_audio_mixture, mask_type=mask_type)
 
@@ -138,12 +138,12 @@ class IdealMask(mask_separation_base.MaskSeparationBase):
         self.result_masks = []
 
         for source in self.sources:
-            if self.mask_type == self.BINARY_MASK:
+            if self.mask_type == constants.BINARY_MASK:
                 mag = source.magnitude_spectrogram_data  # Alias this variable, for easy reading
                 cur_mask = (mag >= (self._mixture_mag_spec - mag))
                 mask = masks.BinaryMask(cur_mask)
 
-            elif self.mask_type == self.SOFT_MASK:
+            elif self.mask_type == constants.SOFT_MASK:
                 # TODO: This is a kludge. What is the actual right way to do this?
                 sm = np.divide(self.audio_signal.magnitude_spectrogram_data, source.magnitude_spectrogram_data)
                 # log_sm1 = np.log(sm - np.min(sm) + 1)
