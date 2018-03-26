@@ -9,6 +9,7 @@ import audio_signal
 import constants
 import utils
 import stft_utils
-import representations
+import transforms
+import data_sets
 
-__all__ = ['audio_signal', 'utils', 'constants', 'stft_utils', 'representations']
+__all__ = ['audio_signal', 'utils', 'constants', 'stft_utils', 'transforms', 'data_sets']

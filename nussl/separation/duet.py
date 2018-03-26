@@ -151,7 +151,7 @@ class Duet(mask_separation_base.MaskSeparationBase):
             raise ValueError('Cannot run Duet on audio signal without exactly 2 channels!')
 
         # Calculate the stft of both channels and create the frequency matrix (the matrix containing the
-        #  frequencies of analysis of the Fourier transform)
+        #  frequencies of analysis of the Fourier transformation)
         self.stft_ch0, self.stft_ch1, self.frequency_matrix = self._compute_spectrogram(self.sample_rate)
 
         # Calculate the symmetric attenuation (alpha) and delay (delta) for each
@@ -232,7 +232,7 @@ class Duet(mask_separation_base.MaskSeparationBase):
         Returns:
             stft_ch0 (np.matrix): a 2D Numpy matrix containing the stft of channel 0
             stft_ch1 (np.matrix): a 2D Numpy matrix containing the stft of channel 1
-            wmat (np.matrix): a 2D Numpy matrix containing the frequencies of analysis of the Fourier transform
+            wmat (np.matrix): a 2D Numpy matrix containing the frequencies of analysis of the Fourier transformation
         """
 
         # Compute the stft of the two channel mixtures
@@ -243,8 +243,9 @@ class Duet(mask_separation_base.MaskSeparationBase):
         stft_ch1 = self.audio_signal.get_stft_channel(1)
 
         # Compute the freq. matrix for later use in phase calculations
-        n_time_bins = len(self.audio_signal.time_bins_vector)
-        wmat = np.array(np.tile(np.mat(self.audio_signal.freq_vector).T, (1, n_time_bins))) * (2 * np.pi / sample_rate)
+        n_time_bins = self.transformation.length
+        freq_vector = self.transformation.freq_vector
+        wmat = np.array(np.tile(np.mat(freq_vector).T, (1, n_time_bins))) * (2 * np.pi / sample_rate)
         wmat += constants.EPSILON
         return stft_ch0, stft_ch1, wmat
 
@@ -443,7 +444,8 @@ class Duet(mask_separation_base.MaskSeparationBase):
             new_sig = new_sig.apply_mask(self.result_masks[i])
             new_sig.stft_params = self.stft_params
             source_estimate = new_sig.istft(overwrite=True, truncate_to_length=self.audio_signal.signal_length)
-            cur_signal = nussl.core.audio_signal.AudioSignal(audio_data_array=source_estimate, sample_rate=self.sample_rate)
+            cur_signal = nussl.core.audio_signal.AudioSignal(audio_data_array=source_estimate,
+                                                             sample_rate=self.sample_rate)
             signals.append(cur_signal)
         return signals
 

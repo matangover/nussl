@@ -29,7 +29,7 @@ def main():
     signal = nussl.AudioSignal(path_to_input_file)
 
     # Set random seed in NMF and KMeans to 0
-    params = {'num_sources': 2, 'num_templates': 6, 'distance_measure': nussl.transformers.TransformerNMF.EUCLIDEAN,
+    params = {'num_sources': 2, 'num_templates': 6, 'distance_measure': nussl.modellers.TransformerNMF.EUCLIDEAN,
               'num_iterations': 10, 'random_seed': 0}
     metadata['params'] = params
 

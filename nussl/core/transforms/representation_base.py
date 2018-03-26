@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Base class for all representations in nussl
+Base class for all transforms in nussl
 """
 
 import numpy as np
@@ -14,7 +14,7 @@ from ...separation import masks
 
 class InvertibleRepresentationBase(object):
     """
-    Base class for spectral representations
+    Base class for spectral transforms
     """
 
     NAME = __name__
@@ -31,7 +31,7 @@ class InvertibleRepresentationBase(object):
 
         if audio_data is not None and representation_data is not None:
             raise RepresentationBaseException('Cannot initialize with audio_data '
-                                              'and representation_data!')
+                                              'and transformation_data!')
 
         self._audio_data = audio_data
         self._representation_data = representation_data
@@ -52,7 +52,7 @@ class InvertibleRepresentationBase(object):
 
     @property
     def audio_data(self):
-        """ (:obj:`np.ndarray`): Real-valued, uncompressed, time-domain representation of the audio.
+        """ (:obj:`np.ndarray`): Real-valued, uncompressed, time-domain transformation of the audio.
             2D numpy array with shape `(n_channels, n_samples)`.
             ``None`` by default, this can be initialized at instantiation.
             Usually, this is expected to be floats. Some functions will convert to floats
@@ -67,7 +67,7 @@ class InvertibleRepresentationBase(object):
 
     @property
     def representation_data(self):
-        """ (:obj:`np.ndarray`): Complex-valued, time-frequency representation of the audio.
+        """ (:obj:`np.ndarray`): Complex-valued, time-frequency transformation of the audio.
             2D numpy array with shape `(n_frequency_bins, n_time_bins)`.
             ``None`` by default, this can be initialized at instantiation.
             Usually, this is expected to be floats. Some functions will convert to floats
@@ -78,7 +78,7 @@ class InvertibleRepresentationBase(object):
 
     @representation_data.setter
     def representation_data(self, value):
-        self._representation_data = utils._verify_representation_data(value)
+        self._representation_data = utils._verify_transformation_data(value)
 
     @staticmethod
     def make_window(window_type, length, symmetric=False):
@@ -167,10 +167,10 @@ class InvertibleRepresentationBase(object):
     def make_zeros_mask(self, mask_type=constants.BINARY_MASK):
         """
         Creates a binary or soft mask filled with ZEROS that is the exact shape as
-         :attr:`representation_data`.
+         :attr:`transformation_data`.
 
         Returns:
-            (:class:`MaskBase`): with the shape of :attr:`representation_data`.
+            (:class:`MaskBase`): with the shape of :attr:`transformation_data`.
         """
 
         if mask_type == constants.BINARY_MASK:
@@ -181,10 +181,10 @@ class InvertibleRepresentationBase(object):
     def make_ones_mask(self, mask_type=constants.BINARY_MASK):
         """
         Creates a binary or soft mask filled with ONES that is the exact shape as
-         :attr:`representation_data`.
+         :attr:`transformation_data`.
 
         Returns:
-            (:class:`MaskBase`): with the shape of :attr:`representation_data`.
+            (:class:`MaskBase`): with the shape of :attr:`transformation_data`.
         """
 
         if mask_type == constants.BINARY_MASK:
@@ -194,7 +194,7 @@ class InvertibleRepresentationBase(object):
 
     def apply_mask(self, mask, overwrite=False):
         """
-        Applies a mask to :attr:`representation_data`.
+        Applies a mask to :attr:`transformation_data`.
         Args:
             mask:
             overwrite:
@@ -205,15 +205,15 @@ class InvertibleRepresentationBase(object):
 
         if self.representation_data is None or self.representation_data.size == 0:
             raise RepresentationBaseException('Cannot apply mask when '
-                                              'self.representation_data is empty!')
+                                              'self.transformation_data is empty!')
 
         if not isinstance(mask, masks.MaskBase):
             raise RepresentationBaseException('mask is {} but is expected to be a '
                                               'MaskBase-derived object!'.format(type(mask)))
 
         if mask.shape != self.representation_data.shape:
-            raise RepresentationBaseException('Input mask and self.representation_data are not the '
-                                              'same shape! mask: {}, self.representation_data: {}'.
+            raise RepresentationBaseException('Input mask and self.transformation_data are not the '
+                                              'same shape! mask: {}, self.transformation_data: {}'.
                                               format(mask.shape, self.representation_data.shape))
 
         masked_representation = self.representation_data * mask.mask

@@ -3,11 +3,11 @@
 """
 :class:`IdealMask` separates sources using the ideal binary or soft mask from ground truth. It accepts a list of 
 :class:`audio_signal.AudioSignal` objects, each of which contains a known source, and applies a mask to a 
-time-frequency representation of the input mixture created from each of the known sources. This is often used as
+time-frequency transformation of the input mixture created from each of the known sources. This is often used as
 an upper bound on source separation performance when benchmarking new algorithms, as it represents the best possible
 scenario for mask-based methods.
 
-At the time of this writing, the time-frequency representation used by this class is the magnitude spectrogram.
+At the time of this writing, the time-frequency transformation used by this class is the magnitude spectrogram.
 
 This class is derived from :class:`separation.mask_separation_base.MaskSeparationBase` so its 
 :func:`run()` method returns a list of :class:`separation.masks.mask_base.MaskBase` objects.

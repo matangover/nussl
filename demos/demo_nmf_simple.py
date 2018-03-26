@@ -38,8 +38,8 @@ def simple_example():
 
     # Set up TransformerNMF
     num_templates = 2
-    nmf = nussl.transformers.TransformerNMF(mixture, num_components=num_templates, max_num_iterations=100,
-                                            distance_measure=nussl.transformers.TransformerNMF.EUCLIDEAN)
+    nmf = nussl.modellers.TransformerNMF(mixture, num_components=num_templates, max_num_iterations=100,
+                                         distance_measure=nussl.modellers.TransformerNMF.EUCLIDEAN)
 
     # run NMF
     start = time.time()

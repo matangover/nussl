@@ -115,13 +115,13 @@ def plot_stft(signal, file_name, title=None, win_length=None, hop_length=None,
 def e_stft(signal, window_length, hop_length, window_type,
            n_fft_bins=None, remove_reflection=True, remove_padding=False):
     """
-    This function computes a short time fourier transform (STFT) of a 1D numpy array input signal.
+    This function computes a short time fourier transformation (STFT) of a 1D numpy array input signal.
     This will zero pad the signal by half a hop_length at the beginning to reduce the window
     tapering effect from the first window. It also will zero pad at the end to get an integer number of hops.
 
     By default, this function removes the FFT data that is a reflection from over Nyquist. There is an option
     to suppress this behavior and have this function include data from above Nyquist, but since the
-    inverse STFT function, e_istft(), expects data without the reflection, the onus is on the user to remember
+    inverse_transform STFT function, e_istft(), expects data without the reflection, the onus is on the user to remember
     to set the reconstruct_reflection flag in e_istft() input.
 
     Additionally, this function assumes a single channeled audio signal and is not guaranteed to work on
@@ -239,7 +239,7 @@ def librosa_stft_wrapper(signal, window_length, hop_length, window_type=None, re
 
 def e_istft(stft, window_length, hop_length, window_type, reconstruct_reflection=True, remove_padding=True):
     """
-    Computes an inverse_mask short time fourier transform (STFT) from a 2D numpy array of complex values. By default
+    Computes an inverse_mask short time fourier transformation (STFT) from a 2D numpy array of complex values. By default
     this function assumes input STFT has no reflection above Nyquist and will rebuild it, but the
     reconstruct_reflection flag overrides that behavior.
 
@@ -358,7 +358,7 @@ def librosa_istft_wrapper(stft, window_length, hop_length, window_type,
 def e_stft_plus(signal, window_length, hop_length, window_type, sample_rate,
                 n_fft_bins=None, remove_reflection=True):
     """
-    Does a short time fourier transform (STFT) of the signal (by calling e_stft() ), but also calculates
+    Does a short time fourier transformation (STFT) of the signal (by calling e_stft() ), but also calculates
     the power spectral density (PSD), frequency and time vectors for the calculated STFT. This function does not
     give you as many options as e_stft() (wrt removing the reflection and using librosa). If you need that
     flexibility, it is recommended that you either use e_stft() or use an AudioSignal object.
@@ -381,7 +381,7 @@ def e_stft_plus(signal, window_length, hop_length, window_type, sample_rate,
         remove_reflection (bool):
 
     Returns:
-        stft: (np.ndarray) a 2D matrix short time fourier transform data
+        stft: (np.ndarray) a 2D matrix short time fourier transformation data
 
     """
 

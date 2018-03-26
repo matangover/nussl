@@ -343,12 +343,12 @@ class AudioSignalUnitTests(unittest.TestCase):
         signal = nussl.AudioSignal(path_to_input_file=input_file_name)
         signal.stft_params = signal.stft_params
         signal_stft = signal.stft()
-        assert (signal_stft.shape[nussl.STFT_CHAN_INDEX] == 2)
+        assert (signal_stft.shape[nussl.TF_CHAN_INDEX] == 2)
 
         signal.to_mono(overwrite=True)
         signal.stft_params = signal.stft_params
         signal_stft = signal.stft()
-        assert (signal_stft.shape[nussl.STFT_CHAN_INDEX]== 1)
+        assert (signal_stft.shape[nussl.TF_CHAN_INDEX] == 1)
 
     def test_stft(self):
         """
@@ -457,28 +457,41 @@ class AudioSignalUnitTests(unittest.TestCase):
         d /= 2
         self.assertTrue(np.allclose(c.audio_data, d.audio_data))
 
-    def test_representation(self):
+    def test_transformations_basic(self):
 
         test_file = librosa.util.example_audio_file()
 
-        a = nussl.AudioSignal(test_file, representation='stft')
+        a = nussl.AudioSignal(test_file, transformation='stft')
 
-        stft_new = a.stft.forward()
-        stft_old = a.do_stft()
+        a.transform()
+        a.calculate_stft()
 
-        a = nussl.AudioSignal(test_file, representation=nussl.core.representations.STFT)
+        a = nussl.AudioSignal(test_file, transformation=nussl.core.transforms.STFT)
 
-        stft_default = a.representation_forward()
+        stft_default = a.transform()
 
-        stft = nussl.core.representations.STFT(window_length=1024, hop_length=512, n_fft_bins=1024)
-        a = nussl.AudioSignal(test_file, representation=stft)
+        stft = nussl.core.transforms.STFT(window_length=1024, hop_length=512, n_fft_bins=1024)
+        a = nussl.AudioSignal(test_file, transformation=stft)
 
-        b = nussl.AudioSignal(test_file, representation='mel_spectrogram')
+        cqt = nussl.core.transforms.CQT(bins_per_octave=24)
+        b = nussl.AudioSignal(test_file, transformation=cqt)
 
-        b.representation_forward()
-        b.mel_spectrogram_forward()
+        b.transform()
+        with self.assertRaises(AttributeError):
+            b.calculate_stft()
+
+        b.calculate_cqt()
+
+        mel_spec = nussl.core.transforms.MelSpectrogram()
+        c = nussl.AudioSignal(test_file, transformation=mel_spec)
+
+        c.calculate_mel_spectrogram()
+
+        for signal in [a, b, c]:
+            signal.transform()
 
         i = 0
+
 
 
 

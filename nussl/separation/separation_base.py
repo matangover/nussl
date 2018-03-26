@@ -9,9 +9,6 @@ import jsonpickle
 import jsonpickle.ext.numpy as jsonpickle_numpy
 jsonpickle_numpy.register_handlers()
 
-from ..core import utils
-from ..core import audio_signal
-from ..core import constants
 from ..core.audio_signal import AudioSignal
 
 
@@ -21,23 +18,27 @@ class SeparationBase(object):
     Do not call this. It will not do anything.
 
     Parameters:
-        input_audio_signal (:class:`audio_signal.AudioSignal`). :class:`audio_signal.AudioSignal` object.
-                            This will always make a copy of the provided AudioSignal object.
+        input_audio_signal (:class:`audio_signal.AudioSignal`). :class:`audio_signal.AudioSignal`
+            object. This makes a copy of the provided AudioSignal object.
     """
 
     # Representations that this algorithm can run on. For more information see
-    ALLOWED_REPRESENTATIONS = {}
+    ALLOWED_TRANSFORMATIONS = {}
 
-    def __init__(self, input_audio_signal):
+    def __init__(self, input_audio_signal, transformation=None):
         if not isinstance(input_audio_signal, AudioSignal):
             raise ValueError('input_audio_signal is not an AudioSignal object!')
 
         self._audio_signal = None
+        self._transformation = None
 
         if input_audio_signal is not None:
             self.audio_signal = input_audio_signal
         else:
             self.audio_signal = AudioSignal()
+
+        if transformation is None:
+            self._transformation = self.audio_signal.transformation
 
         if not self.audio_signal.has_data:
             warnings.warn('input_audio_signal has no data!')
@@ -62,6 +63,20 @@ class SeparationBase(object):
         Literally :attr:`audio_signal.stft_params`.
         """
         return self.audio_signal.stft_params
+
+    @property
+    def transformation(self):
+        """
+
+        Returns:
+
+        """
+        return self._transformation
+
+    @transformation.setter
+    def transformation(self, value):
+
+        self._transformation = value
 
     @property
     def audio_signal(self):

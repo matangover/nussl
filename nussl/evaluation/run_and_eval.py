@@ -64,7 +64,7 @@ def run_and_evaluate(evaluation_object, evaluation_kwargs,
 
 def run_and_eval_prf(separation_list, separation_kwargs,
                      mixture_list, true_sources_list_of_lists,
-                     skip_errors=False, name_list=None):
+                     skip_errors=False, name_list=None, verbose=False):
     """
     This is a helper method to run a :ref:`MaskSeparationBase`-derived source separation algorithm
     on a list of mixtures (provided in `mixture_list`)
@@ -85,13 +85,15 @@ def run_and_eval_prf(separation_list, separation_kwargs,
     separation_list = utils.verify_mask_separation_base_list(separation_list)
 
     scores = {}
-    for separation_object in separation_list:
-        for i, mixture in enumerate(mixture_list):
+    for i, separation_object in enumerate(separation_list):
+        for j, mixture in enumerate(mixture_list):
+            if verbose:
+                print('Starting {} and {}'.format(str(separation_object), mixture.file_name))
 
-            true_sources_list = utils.verify_audio_signal_list_strict(true_sources_list_of_lists[i])
+            true_sources_list = utils.verify_audio_signal_list_strict(true_sources_list_of_lists[j])
 
             if mixture.signal_length != true_sources_list[0].signal_length:
-                error = 'Mixture signal_length does not match true sources at idx {}'.format(i)
+                error = 'Mixture signal_length does not match true sources at idx {}'.format(j)
                 if skip_errors:
                     warnings.warn(error)
                     continue
@@ -99,7 +101,7 @@ def run_and_eval_prf(separation_list, separation_kwargs,
                     raise RuntimeError(error)
 
             if mixture.num_channels != true_sources_list[0].num_channels:
-                error = 'Mixture num_channels does not match true sources at idx {}'.format(i)
+                error = 'Mixture num_channels does not match true sources at idx {}'.format(j)
                 if skip_errors:
                     warnings.warn(error)
                     continue
@@ -109,7 +111,7 @@ def run_and_eval_prf(separation_list, separation_kwargs,
             # Setup and run the user provided algorithm
             sep = separation_object(input_audio_signal=mixture,
                                     mask_type=constants.BINARY_MASK,
-                                    *separation_kwargs)
+                                    *separation_kwargs[i])
 
             est_mask_list = sep.run()
 

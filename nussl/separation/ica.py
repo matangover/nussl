@@ -140,9 +140,10 @@ class ICA(separation_base.SeparationBase):
         # store the resultant computations
         self.estimated_mixing_params = ica.mixing_
         self.mean = ica.mean_
-        self.estimated_sources = [nussl.core.audio_signal.AudioSignal(audio_data_array=ica_output[i, :],
-                                                                      sample_rate=self.audio_signal.sample_rate)
-                                  for i in range(ica_output.shape[0])]
+        self.estimated_sources = [
+            nussl.core.audio_signal.AudioSignal(audio_data_array=ica_output[i, :],
+                                                sample_rate=self.audio_signal.sample_rate)
+            for i in range(ica_output.shape[0])]
 
         return self.estimated_sources
 

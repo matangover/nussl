@@ -28,11 +28,11 @@ class TransformerNMFUnitTests(unittest.TestCase):
             mixture = np.dot(b, a)
 
             # Run with euclidean distance
-            dist_type = nussl.transformers.TransformerNMF.EUCLIDEAN
+            dist_type = nussl.modellers.TransformerNMF.EUCLIDEAN
             self.calculate_nmf_error(mixture, self.n_bases, dist_type, self.n_iters, self.n_attempts, n)
 
             # Run with divergence
-            dist_type = nussl.transformers.TransformerNMF.KL_DIVERGENCE
+            dist_type = nussl.modellers.TransformerNMF.KL_DIVERGENCE
             self.calculate_nmf_error(mixture, self.n_bases, dist_type, self.n_iters, self.n_attempts, n)
 
 
@@ -41,15 +41,15 @@ class TransformerNMFUnitTests(unittest.TestCase):
             matrix = np.random.rand(n, n)
 
             # Run on euclidean
-            distance_type = nussl.transformers.TransformerNMF.EUCLIDEAN
+            distance_type = nussl.modellers.TransformerNMF.EUCLIDEAN
             self.calculate_nmf_error(matrix, self.n_bases, distance_type, self.n_iters, self.n_attempts, n)
 
             # Run on divergence
-            distance_type = nussl.transformers.TransformerNMF.KL_DIVERGENCE
+            distance_type = nussl.modellers.TransformerNMF.KL_DIVERGENCE
             self.calculate_nmf_error(matrix, self.n_bases, distance_type, self.n_iters, self.n_attempts, n)
 
     def calculate_nmf_error(self, mixture, n_bases, dist_type, iterations, attempts, seed):
-        div = nussl.transformers.TransformerNMF.KL_DIVERGENCE
+        div = nussl.modellers.TransformerNMF.KL_DIVERGENCE
         nimfa_type = 'divergence' if dist_type == div else dist_type
 
         for i in range(attempts):

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Base class for invertible representations in nussl
+Base class for invertible spectral transforms in nussl
 """
 from __future__ import division
 
@@ -13,82 +13,82 @@ from .. import constants
 import nussl.separation.masks
 
 
-class InvertibleRepresentationBase(object):
+class InvertibleSpectralTransformationBase(object):
     """
-    Base class for spectral representations
+    Base class for spectral transforms
     """
 
     NAME = __name__
 
-    def __init__(self, audio_data=None, representation_data=None):
+    def __init__(self, audio_data=None, transformation_data=None):
         """
 
         Args:
             audio_data:
-            representation_data:
+            transformation_data:
 
         Returns:
 
         """
 
-        if audio_data is not None and representation_data is not None:
-            raise RepresentationBaseException('Cannot initialize with audio_data '
-                                              'and representation_data!')
+        if audio_data is not None and transformation_data is not None:
+            raise TransformationBaseException('Cannot initialize with audio_data '
+                                              'and transformation_data!')
 
         self._audio_data = audio_data
-        self._representation_data = representation_data
+        self._transformation_data = transformation_data
 
     @property
     def is_empty(self):
         """
-        Returns true if there is no :attr:`audio_data` and no :attr:`representation_data`.
+        Returns true if there is no :attr:`audio_data` and no :attr:`transformation_data`.
 
         Returns:
-            `not (:attr:`has_audio_data` or :attr:`has_representation_data`)`
+            `not (:attr:`has_audio_data` or :attr:`has_transformation_data`)`
 
         See Also:
-            :attr:`has_audio_data`, :attr:`has_representation_data`.
+            :attr:`has_audio_data`, :attr:`has_transformation_data`.
 
         """
-        return not (self.has_audio_data or self.has_representation_data)
+        return not (self.has_audio_data or self.has_transformation_data)
 
     @property
     def has_audio_data(self):
         """
-        Returns if this representation has any information in :attr:`audio_data`.
+        Returns if this transformation has any information in :attr:`audio_data`.
 
         Returns:
             True if :attr:`audio_data` is not `None` and :attr:`audio_data.size` > 0.
 
         See Also:
-            :attr:`has_representation_data`, :attr:`is_empty`.
+            :attr:`has_transformation_data`, :attr:`is_empty`.
 
         """
         return self.audio_data is not None and self.audio_data.size > 0
 
     @property
-    def has_representation_data(self):
+    def has_transformation_data(self):
         """
-        Returns if this representation has any information in :attr:`representation_data`.
+        Returns if this transformation has any information in :attr:`transformation_data`.
 
         Returns:
-            True if :attr:`representation_data` is not `None`
-            and :attr:`representation_data.size` > 0.
+            True if :attr:`transformation_data` is not `None`
+            and :attr:`transformation_data.size` > 0.
 
         See Also:
             :attr:`has_audio_data`, :attr:`is_empty`.
 
         """
-        return self.representation_data is not None and self.representation_data.size > 0
+        return self.transformation_data is not None and self.transformation_data.size > 0
 
-    def forward(self):
+    def transform(self):
         """
 
         Returns:
 
         """
 
-    def inverse(self):
+    def inverse_transform(self):
         """
 
         Returns:
@@ -104,7 +104,7 @@ class InvertibleRepresentationBase(object):
 
     @property
     def audio_data(self):
-        """ (:obj:`np.ndarray`): Real-valued, uncompressed, time-domain representation of the audio.
+        """ (:obj:`np.ndarray`): Real-valued, uncompressed, time-domain transformation of the audio.
             2D numpy array with shape `(n_channels, n_samples)`.
             ``None`` by default, this can be initialized at instantiation.
             Usually, this is expected to be floats. Some functions will convert to floats
@@ -118,19 +118,49 @@ class InvertibleRepresentationBase(object):
         self._audio_data = utils._verify_audio_data(value)
 
     @property
-    def representation_data(self):
-        """ (:obj:`np.ndarray`): Complex-valued, time-frequency representation of the audio.
+    def transformation_data(self):
+        """ (:obj:`np.ndarray`): Complex-valued, time-frequency transformation of the audio.
             2D numpy array with shape `(n_frequency_bins, n_time_bins)`.
             ``None`` by default, this can be initialized at instantiation.
             Usually, this is expected to be floats. Some functions will convert to floats
             if not already.
         """
 
-        return self._representation_data
+        return self._transformation_data
 
-    @representation_data.setter
-    def representation_data(self, value):
-        self._representation_data = utils._verify_representation_data(value)
+    @transformation_data.setter
+    def transformation_data(self, value):
+        self._transformation_data = utils._verify_transformation_data(value)
+
+    @property
+    def num_channels(self):
+        """ (int): Number of channels this Transformation object has.
+            Defaults to returning number of channels in :attr:`transformation_data`.
+            If no data ``None`` then returns ``None``.
+        """
+        if self.transformation_data is not None:
+            return self.transformation_data.shape[constants.TF_CHAN_INDEX]
+        return None
+
+    @property
+    def is_mono(self):
+        """
+        PROPERTY
+        Returns:
+            (bool): Whether or not this signal is mono (i.e., has exactly `one` channel).
+
+        """
+        return self.num_channels == 1
+
+    @property
+    def is_stereo(self):
+        """
+        PROPERTY
+        Returns:
+            (bool): Whether or not this signal is stereo (i.e., has exactly `two` channels).
+
+        """
+        return self.num_channels == 2
 
     @staticmethod
     def make_window(window_type, length, symmetric=False):
@@ -219,34 +249,34 @@ class InvertibleRepresentationBase(object):
     def make_zeros_mask(self, mask_type=constants.BINARY_MASK):
         """
         Creates a binary or soft mask filled with ZEROS that is the exact shape as
-         :attr:`representation_data`.
+         :attr:`transformation_data`.
 
         Returns:
-            (:class:`MaskBase`): with the shape of :attr:`representation_data`.
+            (:class:`MaskBase`): with the shape of :attr:`transformation_data`.
         """
 
         if mask_type == constants.BINARY_MASK:
-            return nussl.separation.masks.BinaryMask.zeros(self.representation_data.shape)
+            return nussl.separation.masks.BinaryMask.zeros(self.transformation_data.shape)
         else:
-            return nussl.separation.masks.SoftMask.zeros(self.representation_data.shape)
+            return nussl.separation.masks.SoftMask.zeros(self.transformation_data.shape)
 
     def make_ones_mask(self, mask_type=constants.BINARY_MASK):
         """
         Creates a binary or soft mask filled with ONES that is the exact shape as
-         :attr:`representation_data`.
+         :attr:`transformation_data`.
 
         Returns:
-            (:class:`MaskBase`): with the shape of :attr:`representation_data`.
+            (:class:`MaskBase`): with the shape of :attr:`transformation_data`.
         """
 
         if mask_type == constants.BINARY_MASK:
-            return nussl.separation.masks.BinaryMask.ones(self.representation_data.shape)
+            return nussl.separation.masks.BinaryMask.ones(self.transformation_data.shape)
         else:
-            return nussl.separation.masks.SoftMask.ones(self.representation_data.shape)
+            return nussl.separation.masks.SoftMask.ones(self.transformation_data.shape)
 
     def apply_mask(self, mask, overwrite=False):
         """
-        Applies a mask to :attr:`representation_data`.
+        Applies a mask to :attr:`transformation_data`.
         Args:
             mask:
             overwrite:
@@ -255,28 +285,28 @@ class InvertibleRepresentationBase(object):
 
         """
 
-        if self.representation_data is None or self.representation_data.size == 0:
-            raise RepresentationBaseException('Cannot apply mask when '
-                                              'self.representation_data is empty!')
+        if self.transformation_data is None or self.transformation_data.size == 0:
+            raise TransformationBaseException('Cannot apply mask when '
+                                              'self.transformation_data is empty!')
 
         if not isinstance(mask, nussl.separation.masks.MaskBase):
-            raise RepresentationBaseException('mask is {} but is expected to be a '
+            raise TransformationBaseException('mask is {} but is expected to be a '
                                               'MaskBase-derived object!'.format(type(mask)))
 
-        if mask.shape != self.representation_data.shape:
-            raise RepresentationBaseException('Input mask and self.representation_data are not the '
-                                              'same shape! mask: {}, self.representation_data: {}'.
-                                              format(mask.shape, self.representation_data.shape))
+        if mask.shape != self.transformation_data.shape:
+            raise TransformationBaseException('Input mask and self.transformation_data are not the '
+                                              'same shape! mask: {}, self.transformation_data: {}'.
+                                              format(mask.shape, self.transformation_data.shape))
 
-        masked_representation = self.representation_data * mask.mask
+        masked_transformation = self.transformation_data * mask.mask
 
         if overwrite:
-            self.representation_data = masked_representation
+            self.transformation_data = masked_transformation
 
-        return masked_representation
+        return masked_transformation
 
 
-class RepresentationBaseException(Exception):
+class TransformationBaseException(Exception):
     """
     Exception class for RepresentationBase
     """

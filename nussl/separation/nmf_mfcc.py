@@ -8,7 +8,7 @@ import sklearn.cluster
 import librosa
 
 from ..core import constants
-from ..transformers import transformer_nmf
+from ..modellers import transformer_nmf
 import mask_separation_base
 import masks
 

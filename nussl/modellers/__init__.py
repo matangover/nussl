@@ -24,7 +24,7 @@
                        ~~             /  /
                                      |__/
 
-Imports for transformers classes. More than meets the eye.
+Imports for modellers classes. More than meets the eye.
 """
 
 from .transformer_nmf import TransformerNMF

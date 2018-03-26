@@ -84,8 +84,8 @@ tools:
 
 -  No PEP8 warnings, check with:
 
-           $ pip install pep8
-           $ pep8 path/to/module.py
+           $ pip install pycodestyle 
+           $ pycodestyle --max-line-length=100 path/to/module.py
 
 -  AutoPEP8 can help you fix some of the easy redundant errors:
 
@@ -116,12 +116,14 @@ following rules before submitting:
    can be found by runnning the following code snippet:
 
   ```python
-  import platform; print(platform.platform())
-  import sys; print("Python", sys.version)
-  import numpy; print("NumPy", numpy.__version__)
-  import scipy; print("SciPy", scipy.__version__)
-  import librosa; print("librosa", librosa.__version__)
-  import nussl; print("nussl", nussl.__version__)
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+import platform; print(platform.platform())
+import sys; print("Python", sys.version)
+import numpy; print("NumPy", numpy.__version__)
+import scipy; print("SciPy", scipy.__version__)
+import librosa; print("librosa", librosa.__version__)
+import nussl; print("nussl", nussl.__version__)
   ```
 
 Documentation

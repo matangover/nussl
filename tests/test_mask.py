@@ -60,7 +60,7 @@ class MaskUnitTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             soft_mask.get_channel(1)
 
-        assert np.all(soft_mask.mask == np.expand_dims(arr, axis=nussl.STFT_CHAN_INDEX))
+        assert np.all(soft_mask.mask == np.expand_dims(arr, axis=nussl.TF_CHAN_INDEX))
         assert soft_mask.mask.ndim == arr.ndim + 1
 
     def test_binary_mask_setup(self):

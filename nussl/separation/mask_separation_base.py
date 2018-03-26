@@ -38,8 +38,10 @@ class MaskSeparationBase(separation_base.SeparationBase):
     """
     _valid_mask_types = [constants.BINARY_MASK, constants.SOFT_MASK]
 
-    def __init__(self, input_audio_signal, mask_type=constants.SOFT_MASK, mask_threshold=0.5):
-        super(MaskSeparationBase, self).__init__(input_audio_signal=input_audio_signal)
+    def __init__(self, input_audio_signal, transformation=None,
+                 mask_type=constants.SOFT_MASK, mask_threshold=0.5):
+        super(MaskSeparationBase, self).__init__(input_audio_signal=input_audio_signal,
+                                                 transformation=transformation)
 
         self._mask_type = None
         self.mask_type = mask_type

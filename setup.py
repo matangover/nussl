@@ -9,7 +9,7 @@ import re
 
 try:
     from setuptools import setup
-except:
+except Exception:
     from distutils.core import setup
 
 ######################################################

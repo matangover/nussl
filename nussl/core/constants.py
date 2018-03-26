@@ -5,13 +5,14 @@ A repository containing all of the constants frequently used in
 this wacky, mixed up source separation stuff.
 """
 import scipy.signal
+from six.moves.urllib_parse import urljoin
 
 __all__ = ['DEFAULT_SAMPLE_RATE', 'DEFAULT_WIN_LEN_PARAM', 'DEFAULT_BIT_DEPTH',
            'DEFAULT_MAX_VAL', 'EPSILON', 'MAX_FREQUENCY',
            'WINDOW_HAMMING', 'WINDOW_RECTANGULAR', 'WINDOW_HANN',
            'WINDOW_BLACKMAN', 'WINDOW_TRIANGULAR', 'WINDOW_DEFAULT',
            'ALL_WINDOWS', 'NUMPY_JSON_KEY', 'LEN_INDEX', 'CHAN_INDEX',
-           'STFT_VERT_INDEX', 'STFT_LEN_INDEX', 'STFT_CHAN_INDEX']
+           'TF_FREQ_INDEX', 'TF_TIME_INDEX', 'TF_CHAN_INDEX']
 
 DEFAULT_SAMPLE_RATE = 44100  #: (int): Default sample rate. 44.1 kHz, CD-quality
 DEFAULT_WIN_LEN_PARAM = 0.04  #: (float): Default window length. 40ms
@@ -49,20 +50,31 @@ LEN_INDEX = 1  #: (int): Index of the number of samples in an audio signal. Used
 CHAN_INDEX = 0  #: (int): Index of the number of channels in an audio signal. Used in :ref:`audio_signal`
 
 # stft_data
-STFT_VERT_INDEX = 0
+TF_FREQ_INDEX = 0
 """
 (int) Index of the number of frequency (vertical) values in a time-frequency representation. 
 Used in :ref:`audio_signal` and in :ref:`mask_base`.
 """
-STFT_LEN_INDEX = 1
+TF_TIME_INDEX = 1
 """
 (int) Index of the number of time (horizontal) hops in a time-frequency representation. 
 Used in :ref:`audio_signal` and in :ref:`mask_base`.
 """
-STFT_CHAN_INDEX = 2
+TF_CHAN_INDEX = 2
 """
 (int) Index of the number of channels in a time-frequency representation. 
 Used in :ref:`audio_signal` and in :ref:`mask_base`.
 """
+
+# ############# nussl-extras urls ############# #
+
+NUSSL_EXTRA_BASE_URL = 'https://ethman.github.io/nussl-extras/'
+NUSSL_EXTRA_ASSETS_BASE_URL = urljoin(NUSSL_EXTRA_BASE_URL, 'assets/')
+NUSSL_EXTRA_AUDIO_URL = urljoin(NUSSL_EXTRA_ASSETS_BASE_URL, 'audio/')
+NUSSL_EXTRA_MODELS_URL = urljoin(NUSSL_EXTRA_ASSETS_BASE_URL, 'models/')
+NUSSL_EXTRA_BENCHMARKS_URL = urljoin(NUSSL_EXTRA_ASSETS_BASE_URL, 'benchmarks/')
+NUSSL_EXTRA_AUDIO_METADATA_URL = urljoin(NUSSL_EXTRA_BASE_URL, 'audio_metadata.json')
+NUSSL_EXTRA_BENCHMARK_METADATA_URL = urljoin(NUSSL_EXTRA_BASE_URL, 'benchmark_metadata.json')
+NUSSL_EXTRA_MODEL_METADATA_URL = urljoin(NUSSL_EXTRA_BASE_URL, 'model_metadata.json')
 
 USE_LIBROSA_STFT = False  #: (bool): Whether *nussl* will use librosa's stft function by default

@@ -177,7 +177,7 @@ class TransformerNMF(object):
                  activation_matrix=None, templates=None, distance_measure="euclidean",
                  should_update_template=None, should_update_activation=None)
 
-            nussl_nmf.transform()
+            nussl_nmf.transformation()
             signals = nussl_nmf.recombine_calculated_matrices()
         """
         # Check input_matrix

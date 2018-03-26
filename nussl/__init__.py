@@ -7,15 +7,15 @@ Initialization file for ``nussl``, the Northwestern University Source Separation
 import core
 from .core.constants import *
 from .core.audio_signal import AudioSignal
-from .core import utils, stft_utils
+from .core import utils, stft_utils, data_sets
 from .evaluation import *
 from .separation import *
-from .transformers import *
+from .modellers import *
 
-__all__ = ['core', 'utils', 'stft_utils', 'transformers', 'separation', 'evaluation']
+__all__ = ['core', 'utils', 'stft_utils', 'modellers', 'separation', 'evaluation']
 
 
-__version__ = '0.1.6a0'
+__version__ = '0.1.6'
 
 version = __version__  # aliasing version
 short_version = '.'.join(version.split('.')[:-1])

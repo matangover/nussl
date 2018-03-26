@@ -16,7 +16,7 @@ from ideal_mask import IdealMask
 
 class HighLowPassFilter(mask_separation_base.MaskSeparationBase):
     """
-    A simple high/low pass filter that creates a mask in the time frequency representation
+    A simple high/low pass filter that creates a mask in the time frequency transformation
     """
 
     def __init__(self, input_audio_signal, high_pass_cutoff_hz, do_fir_filter=True,
@@ -66,7 +66,8 @@ class HighLowPassFilter(mask_separation_base.MaskSeparationBase):
 
             # Make a new AudioSignal object with filtered signal
             low_pass_array = np.array(low_pass_array)
-            self.low_pass_signal = self.audio_signal.make_copy_with_audio_data(low_pass_array, verbose=False)
+            self.low_pass_signal = self.audio_signal.make_copy_with_audio_data(low_pass_array,
+                                                                               verbose=False)
             self.high_pass_signal = self.audio_signal - self.low_pass_signal
 
             # Make masks
@@ -79,7 +80,9 @@ class HighLowPassFilter(mask_separation_base.MaskSeparationBase):
 
             # Compute the spectrogram and find the closest frequency bin to the cutoff freq
             self._get_stft()
-            closest_freq_bin = self.audio_signal.get_closest_frequency_bin(self.high_pass_cutoff_hz)
+
+            # TODO:
+            closest_freq_bin = self.transformation.get_closest_frequency_bin(self.high_pass_cutoff_hz)
 
             # Make masks
             self.low_pass_mask = self.ones_mask(self.stft.shape)

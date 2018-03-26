@@ -8,7 +8,7 @@ represented under the hood as a three dimensional numpy :obj:`ndarray` object. T
 below.
 
 Right now only spectrogram-like masks are supported (note the shape of the :ref:`mask` property), but in future
-releases nussl will support masks for representations with different dimensionality requirements.
+releases nussl will support masks for transforms with different dimensionality requirements.
 """
 
 import numbers
@@ -74,7 +74,7 @@ class MaskBase(object):
             raise ValueError('Cannot support arrays with less than 2 dimensions!')
 
         if value.ndim == 2:
-            value = np.expand_dims(value, axis=constants.STFT_CHAN_INDEX)
+            value = np.expand_dims(value, axis=constants.TF_CHAN_INDEX)
 
         if value.ndim > 3:
             raise ValueError('Cannot support arrays with more than 3 dimensions!')
@@ -106,7 +106,7 @@ class MaskBase(object):
         if n < 0:
             raise ValueError('Cannot get channel {}. This will cause unexpected results!'.format(n))
 
-        return utils._get_axis(self.mask, constants.STFT_CHAN_INDEX, n)
+        return utils._get_axis(self.mask, constants.TF_CHAN_INDEX, n)
 
     @property
     def length(self):
@@ -116,7 +116,7 @@ class MaskBase(object):
         """
         if self.mask is None:
             raise AttributeError('Cannot get length of BinaryMask when there is no mask data!')
-        return self.mask.shape[constants.STFT_LEN_INDEX]
+        return self.mask.shape[constants.TF_TIME_INDEX]
 
     @property
     def height(self):
@@ -126,7 +126,7 @@ class MaskBase(object):
         """
         if self.mask is None:
             raise AttributeError('Cannot get height of BinaryMask when there is no mask data!')
-        return self.mask.shape[constants.STFT_VERT_INDEX]
+        return self.mask.shape[constants.TF_FREQ_INDEX]
 
     @property
     def num_channels(self):
@@ -136,7 +136,7 @@ class MaskBase(object):
         """
         if self.mask is None:
             raise AttributeError('Cannot get num_channels of BinaryMask when there is no mask data!')
-        return self.mask.shape[constants.STFT_CHAN_INDEX]
+        return self.mask.shape[constants.TF_CHAN_INDEX]
 
     @property
     def shape(self):

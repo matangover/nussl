@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Class for computing a Short-Time Fourier Transform (STFT) of audio and inverse STFT (iSTFT) from
+Class for computing a Short-Time Fourier Transform (STFT) of audio and inverse_transform STFT (iSTFT) from
 STFT data to audio data.
 """
 from __future__ import division
@@ -12,12 +12,12 @@ import scipy.fftpack as scifft
 
 from ...core import constants
 from ...core import utils
-import invertible_representation_base
+import invertible_transform_base
 
 
-class STFT(invertible_representation_base.InvertibleRepresentationBase):
+class STFT(invertible_transform_base.InvertibleSpectralTransformationBase):
     """
-    This class computes a Short-Time Fourier Transform (STFT) of an input signal and inverse
+    This class computes a Short-Time Fourier Transform (STFT) of an input signal and inverse_transform
     Short-Time Fourier Transform (iSTFT) of STFT data.
     This will zero pad the signal by half a hop_length at the beginning to reduce the window
     tapering effect from the first window. It also will zero pad at the end to get an integer
@@ -25,7 +25,7 @@ class STFT(invertible_representation_base.InvertibleRepresentationBase):
 
     By default, this function removes the FFT data that is a reflection from over Nyquist. There is
     an option to suppress this behavior and have this function include data from above Nyquist,
-    but since the inverse STFT function expects data without the reflection, the onus is on
+    but since the inverse_transform STFT function expects data without the reflection, the onus is on
     the user to remember to set the reconstruct_reflection flag in e_istft() input.
 
     Additionally, this function assumes a single channeled audio signal and is not guaranteed to
@@ -91,7 +91,7 @@ class STFT(invertible_representation_base.InvertibleRepresentationBase):
 
     NAME = __name__.lower()
 
-    def __init__(self, audio_data=None, representation_data=None,
+    def __init__(self, audio_data=None, transformation_data=None,
                  sample_rate=constants.DEFAULT_SAMPLE_RATE,
                  window_length=constants.DEFAULT_WIN_LENGTH,
                  hop_length=constants.DEFAULT_WIN_LENGTH // 2,
@@ -99,7 +99,7 @@ class STFT(invertible_representation_base.InvertibleRepresentationBase):
                  n_fft_bins=constants.DEFAULT_WIN_LENGTH, reflection=True, pad=False,
                  original_length=None, dtype='float64'):
 
-        super(STFT, self).__init__(audio_data=audio_data, representation_data=representation_data)
+        super(STFT, self).__init__(audio_data=audio_data, transformation_data=transformation_data)
 
         self.window_length = window_length
         self.hop_length = hop_length
@@ -121,11 +121,11 @@ class STFT(invertible_representation_base.InvertibleRepresentationBase):
     @property
     def stft_data(self):
         """
-        STFT data, alias to self.representation_data
+        STFT data, alias to self.transformation_data
         Returns:
 
         """
-        return self.representation_data
+        return self.transformation_data
 
     @property
     def freq_vector(self):
@@ -140,7 +140,7 @@ class STFT(invertible_representation_base.InvertibleRepresentationBase):
         if self.stft_data is None:
             raise AttributeError('Cannot calculate freq_vector until self.stft() is run')
         return np.linspace(0.0, self.sample_rate // 2,
-                           num=self.stft_data.shape[constants.STFT_VERT_INDEX])
+                           num=self.stft_data.shape[constants.TF_FREQ_INDEX])
 
     @property
     def time_bins_vector(self):
@@ -153,11 +153,11 @@ class STFT(invertible_representation_base.InvertibleRepresentationBase):
         """
         if self.stft_data is None:
             raise AttributeError('Cannot calculate time_bins_vector until self.stft() is run')
-        return np.linspace(0.0, self.self.audio_data.shape[constants.LEN_INDEX] / self.sample_rate,
-                           num=self.stft_data.shape[constants.STFT_LEN_INDEX])
+        return np.linspace(0.0, self.audio_data.shape[constants.LEN_INDEX] / self.sample_rate,
+                           num=self.stft_data.shape[constants.TF_TIME_INDEX])
 
     @property
-    def stft_length(self):
+    def length(self):
         """ (int): The number of time windows the STFT has.
         Raises:
             AttributeError: If ``self.stft_dat``a is ``None``.
@@ -165,7 +165,7 @@ class STFT(invertible_representation_base.InvertibleRepresentationBase):
         """
         if self.stft_data is None:
             raise AttributeError('Cannot calculate stft_length until self.stft() is run')
-        return self.stft_data.shape[constants.STFT_LEN_INDEX]
+        return self.stft_data.shape[constants.TF_TIME_INDEX]
 
     @property
     def num_fft_bins(self):
@@ -176,9 +176,9 @@ class STFT(invertible_representation_base.InvertibleRepresentationBase):
         """
         if self.stft_data is None:
             raise AttributeError('Cannot calculate num_fft_bins until self.stft() is run')
-        return self.stft_data.shape[constants.STFT_VERT_INDEX]
+        return self.stft_data.shape[constants.TF_FREQ_INDEX]
 
-    def forward(self):
+    def transform(self):
         """
 
         Returns:
@@ -187,7 +187,7 @@ class STFT(invertible_representation_base.InvertibleRepresentationBase):
         if self.audio_data is None or self.audio_data.size == 0:
             raise STFTException('No time domain signal (self.audio_data) to compute STFT from!')
 
-        if self._representation_data is not None:
+        if self.transformation_data is not None:
             warnings.warn('Overwriting self.stft_data data')
 
         # check for reflection
@@ -201,8 +201,8 @@ class STFT(invertible_representation_base.InvertibleRepresentationBase):
             stfts.append(self._forward_process_channel(signal, num_blocks, stft_bins))
 
         # save with the correct shape
-        self.representation_data = np.array(stfts).transpose((1, 2, 0))
-        return self.representation_data
+        self.transformation_data = np.array(stfts).transpose((1, 2, 0))
+        return self.transformation_data
 
     def _forward_process_channel(self, signal, num_blocks, stft_bins):
 
@@ -225,25 +225,25 @@ class STFT(invertible_representation_base.InvertibleRepresentationBase):
 
         return stft
 
-    def inverse(self, truncate_to_length=None):
+    def inverse_transform(self, truncate_to_length=None):
         """
 
         Returns:
 
         """
 
-        if self.representation_data is None or self.representation_data.size == 0:
+        if self.transformation_data is None or self.transformation_data.size == 0:
             raise STFTException('No stft_data to compute iSTFT from!')
 
-        audio_signal = []
+        signal = []
 
-        for i in range(self.representation_data[constants.STFT_CHAN_INDEX]):
-            chan = utils._get_axis(self.representation_data,
-                                              constants.STFT_CHAN_INDEX, i)
-            audio_signal.append(self._inverse_process_channel(chan))
+        for i in range(self.transformation_data.shape[constants.TF_CHAN_INDEX]):
+            chan = utils._get_axis(self.transformation_data,
+                                   constants.TF_CHAN_INDEX, i)
+            signal.append(self._inverse_process_channel(chan))
 
-        audio_signal = np.array(audio_signal)
-        audio_signal = np.expand_dims(audio_signal, -1) if audio_signal.ndim == 1 else audio_signal
+        signal = np.array(signal)
+        signal = np.expand_dims(signal, -1) if signal.ndim == 1 else signal
 
         # if truncate_to_length isn't provided
         if truncate_to_length is None:
@@ -251,9 +251,9 @@ class STFT(invertible_representation_base.InvertibleRepresentationBase):
                 truncate_to_length = self.original_length
 
         if truncate_to_length is not None and truncate_to_length > 0:
-            audio_signal = audio_signal[:, :truncate_to_length]
+            signal = signal[:, :truncate_to_length]
 
-        self.audio_data = audio_signal
+        self.audio_data = signal
         return self.audio_data
 
     def _inverse_process_channel(self, stft):
@@ -301,6 +301,74 @@ class STFT(invertible_representation_base.InvertibleRepresentationBase):
         reflection = matrix[-2:0:-1, :]
         reflection = reflection.conj()
         return np.vstack((matrix, reflection))
+
+    @property
+    def power_spectrogram_data(self):
+        """ (:obj:`np.ndarray`): Returns a real valued ``np.array`` with power spectrogram data.
+        The power spectrogram is defined as (STFT)^2, where ^2 is element-wise squaring
+        of entries of the STFT. Same shape as :attr:`stft_data`.
+
+        Raises:
+            AttributeError: if :attr:`stft_data` is ``None``.
+            Run :func:`stft` before accessing this.
+
+        See Also:
+            * :attr:`stft_data` complex-valued Short-time Fourier Transform data.
+            * :attr:`power_magnitude_data`
+            * :func:`get_power_spectrogram_channel`
+
+        """
+        if self.stft_data is None:
+            raise AttributeError('Cannot calculate power_spectrogram_data'
+                                 ' because self.stft_data is None')
+        return np.abs(self.stft_data) ** 2
+
+    @property
+    def magnitude_spectrogram_data(self):
+        """ (:obj:`np.ndarray`): Returns a real valued ``np.array`` with magnitude spectrogram data.
+
+        The power spectrogram is defined as Abs(STFT), the element-wise absolute
+        value of every item in the STFT. Same shape as :attr:`stft_data`.
+
+        Raises:
+            AttributeError: if :attr:`stft_data` is ``None``.
+            Run :func:`stft` before accessing this.
+
+        See Also:
+            * :attr:`stft_data` complex-valued Short-time Fourier Transform data.
+            * :attr:`power_spectrogram_data`
+            * :func:`get_magnitude_spectrogram_channel`
+
+        """
+        if self.stft_data is None:
+            raise AttributeError('Cannot calculate magnitude_spectrogram_data'
+                                 ' because self.stft_data is None')
+        return np.abs(self.stft_data)
+
+    def get_closest_frequency_bin(self, freq):
+        """
+        Returns index of the closest element to freq
+
+        Args:
+            freq: (int) frequency to retrieve in Hz
+
+        Returns:
+            (int) index of closest frequency to input freq
+
+        Example:
+
+            .. code-block:: python
+                :linenos:
+                # Make a low pass filter starting around 1200 Hz
+                signal = nussl.AudioSignal('path_to_song.wav')
+                signal.stft()
+                idx = signal.get_closest_frequency_bin(1200)  # 1200 Hz
+                signal.stft_data[idx:, :, :] = 0.0  # eliminate everything above idx
+
+        """
+        if self.freq_vector is None:
+            raise STFTException('Cannot get frequency bin until stft is computed!')
+        return (np.abs(self.freq_vector - freq)).argmin()
 
 
 class STFTException(Exception):
